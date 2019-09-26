@@ -1,0 +1,39 @@
+{
+    "name": "sector45",
+    "version": "1.0.0",
+    "description": "Back-end application for a banking app prototype",
+    "main": "src/index.js",
+    "_moduleAliases": {
+        "@services": "src/services"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/furkanDogu/Sector45.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/furkanDogu/Sector45/issues"
+    },
+    "homepage": "https://github.com/furkanDogu/Sector45#readme",
+    "dependencies": {
+        "bcrypt": "^3.0.6",
+        "class-validator": "^0.10.1",
+        "express": "^4.17.1",
+        "jsonwebtoken": "^8.5.1",
+        "ts-node": "^8.4.1",
+        "typeorm": "^0.2.19"
+    },
+    "devDependencies": {
+        "tslint": "^5.20.0",
+        "tslint-config-airbnb": "^5.11.2",
+        "tslint-config-prettier": "^1.18.0",
+        "tslint-loader": "^3.5.4",
+        "tslint-plugin-prettier": "^2.0.1",
+        "typescript": "^3.6.3"
+    }
+}
