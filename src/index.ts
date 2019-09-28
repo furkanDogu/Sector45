@@ -1,1 +1,28 @@
-console.log('initial commit');
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import bodyParser from 'body-parser';
+import { createConnection } from 'typeorm';
+
+import routes from './routes';
+import { API_PORT } from './appConfig';
+
+(async () => {
+    try {
+        await createConnection();
+        console.log('Succesfully connected');
+
+        const app = express();
+
+        app.use(cors());
+        app.use(helmet());
+        app.use(bodyParser.json());
+        app.use('/', routes);
+
+        app.listen(API_PORT, () => {
+            console.log(`The server is started on port ${API_PORT}`);
+        });
+    } catch (e) {
+        console.log('An error occured while connecting to the db', e);
+    }
+})();
