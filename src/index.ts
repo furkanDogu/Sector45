@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -10,7 +11,7 @@ import { API_PORT } from './appConfig';
 (async () => {
     try {
         await createConnection();
-        console.log('Succesfully connected');
+        console.info('Succesfully connected to the db');
 
         const app = express();
 
@@ -20,9 +21,9 @@ import { API_PORT } from './appConfig';
         app.use('/', routes);
 
         app.listen(API_PORT, () => {
-            console.log(`The server is started on port ${API_PORT}`);
+            console.info(`The server is started on port ${API_PORT}`);
         });
     } catch (e) {
-        console.log('An error occured while connecting to the db', e);
+        console.error('An error occured while connecting to the db', e);
     }
 })();
