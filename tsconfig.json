@@ -2,9 +2,11 @@
     "include": ["src"],
     "exclude": ["build", "node_modules"],
     "compilerOptions": {
-        "baseUrl": "./",
+        "rootDirs": ["./"],
+        "baseUrl": ".",
         "paths": {
-            "@services/*": ["src/services/*"]
+            "@utils/*": ["src/utils/*"],
+            "@entities": ["src/entities"]
         },
         "incremental": true,
         "esModuleInterop": true,
@@ -21,9 +23,9 @@
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "module": "commonjs",
-        "noImplicitAny": true,
         "moduleResolution": "node",
         "resolveJsonModule": true,
+        "isolatedModules": true,
         "outDir": "build",
         "strictPropertyInitialization": false
     }
