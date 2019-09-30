@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Min, IsBoolean, IsNotEmpty } from 'class-validator';
 
-import { Customer, Transaction } from '@entities';
+import { Customer, Transaction, Operation } from '@entities';
 import { Lazy } from '@utils/ormHelpers';
 
 @Entity()
@@ -31,6 +31,9 @@ export class Account extends BaseEntity {
 
     @OneToMany(() => Transaction, transaction => transaction.receiverAccount, { lazy: true })
     transactions: Lazy<Transaction[]>;
+
+    @OneToMany(() => Operation, operation => operation.account, { lazy: true })
+    operations: Lazy<Operation[]>;
 
     @BeforeInsert()
     async setAccountNo() {
