@@ -6,7 +6,8 @@
         "baseUrl": ".",
         "paths": {
             "@utils/*": ["src/utils/*"],
-            "@entities": ["src/entities"]
+            "@entities": ["src/entities"],
+            "@controllers": ["src/controllers"]
         },
         "incremental": true,
         "esModuleInterop": true,

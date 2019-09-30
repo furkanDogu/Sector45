@@ -5,7 +5,8 @@
     "main": "src/index.js",
     "_moduleAliases": {
         "@utils": "src/utils",
-        "@entities": "src/entities"
+        "@entities": "src/entities",
+        "@controllers": "src/controllers"
     },
     "scripts": {
         "dev": "ts-node-dev --no-notify -r tsconfig-paths/register src/index.ts",
