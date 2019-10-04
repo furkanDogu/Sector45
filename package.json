@@ -6,7 +6,8 @@
     "_moduleAliases": {
         "@utils": "src/utils",
         "@entities": "src/entities",
-        "@controllers": "src/controllers"
+        "@controllers": "src/controllers",
+        "@config": "src/appConfig.ts"
     },
     "scripts": {
         "dev": "ts-node-dev --no-notify -r tsconfig-paths/register src/index.ts",
@@ -32,6 +33,7 @@
     "dependencies": {
         "@types/bcrypt": "^3.0.0",
         "@types/helmet": "0.0.44",
+        "@types/jsonwebtoken": "^8.3.4",
         "@types/mssql": "^4.3.1",
         "@types/shortid": "0.0.29",
         "bcrypt": "^3.0.6",
