@@ -11,3 +11,5 @@ export const findEntityById = async <T>(repo: Repository<T>, id: number | string
 
     return entity;
 };
+
+export const modifyErrMsg = (e: any) => (e.constructor === Array && e[0].constraints) || e.message;

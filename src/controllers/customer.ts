@@ -1,11 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
-import { validate } from 'class-validator';
-import { plainToClassFromExist } from 'class-transformer';
+import { Request, Response } from 'express';
+import { validateOrReject } from 'class-validator';
+import { plainToClass } from 'class-transformer';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 import { Customer, Address } from '@entities';
 import { JWT_SECRET } from '@config';
+import { modifyErrMsg } from '@utils/ormHelpers';
 
 //Müşteri ve adres bilgilerini response objeleri içerisinden al.
 // Objelerden dönen bilgileri validate ile kontrol et.
@@ -13,38 +14,28 @@ import { JWT_SECRET } from '@config';
 // Veritabanı kayıt işlemleri  gerçekleştirdikten sonra kullanıcıya online kalabilmesi adına
 //token döneceğiz.
 export class CustomerController {
-    static register = async (req: Request, res: Response, next: NextFunction) => {
-        if (
-            !req.body.address ||
-            (await validate(plainToClassFromExist(Address, req.body.address))).length > 0
-        ) {
-            res.status(403).json({ data: 'Address information is not valid' });
-            return;
-        }
-        const address = Address.create(req.body.address);
+    static register = async (req: Request, res: Response) => {
+        let address, customer;
         try {
-            await address.save();
+            await validateOrReject(plainToClass(Address, req.body.address));
+            address = await Address.create(req.body.address).save();
+            delete req.body.address;
         } catch (e) {
-            res.status(400).json({ data: e.message });
+            res.status(400).json(modifyErrMsg(e));
             return;
         }
-        delete req.body.address;
 
-        if ((await validate(plainToClassFromExist(Customer, req.body))).length > 0) {
-            res.status(403).json({ data: 'Customer information is not valid' });
-            return;
-        }
-        const customer = await Customer.create({
-            ...req.body,
-            address,
-        });
         try {
-            await customer.save();
+            await validateOrReject(plainToClass(Customer, req.body));
+            customer = await Customer.create({
+                ...req.body,
+                address,
+            }).save();
+            delete customer.password;
         } catch (e) {
-            res.status(400).json({ data: e.message });
+            res.status(400).json(modifyErrMsg(e));
             return;
         }
-        delete customer.password;
 
         res.status(200).json({
             token: jwt.sign(
@@ -61,30 +52,31 @@ export class CustomerController {
     //Müşteri TCKN ve şifre bilgilerini request obje içerisine al.
     //TCKN database üzerinde var ise mevcut TCKN'ye ait şifreyi eldeki şifre ile karşılaştır.
     //Mevcut bilgiler için bir token oluştur.
-    static login = async (req: Request, res: Response, next: NextFunction) => {
+    static login = async (req: Request, res: Response) => {
+        const e = 'Login Information is not valid';
         const customer = await Customer.findOne({
             where: { TCKN: req.body.TCKN },
         });
 
         if (!customer) {
-            res.status(401).json({ data: 'Login Information is not valid' });
+            res.status(401).json(e);
             return;
         }
 
-        if (await bcrypt.compare(req.body.password, customer.password)) {
-            res.status(200).json({
-                token: jwt.sign(
-                    {
-                        customerNo: customer.customerNo,
-                    },
-                    JWT_SECRET,
-                    { expiresIn: 36000000 }
-                ),
-                data: customer,
-            });
+        if (!(await bcrypt.compare(req.body.password, customer.password))) {
+            res.status(401).json(e);
             return;
         }
 
-        res.status(401).json({ data: 'Login Information is not valid' });
+        res.status(200).json({
+            token: jwt.sign(
+                {
+                    customerNo: customer.customerNo,
+                },
+                JWT_SECRET,
+                { expiresIn: 36000000 }
+            ),
+            data: customer,
+        });
     };
 }

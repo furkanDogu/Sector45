@@ -8,7 +8,8 @@
             "@utils/*": ["src/utils/*"],
             "@entities": ["src/entities"],
             "@controllers": ["src/controllers"],
-            "@config": ["src/appConfig.ts"]
+            "@config": ["src/appConfig.ts"],
+            "@middlewares": ["src/middlewares"]
         },
         "incremental": true,
         "esModuleInterop": true,
