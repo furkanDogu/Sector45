@@ -7,7 +7,8 @@
         "@utils": "src/utils",
         "@entities": "src/entities",
         "@controllers": "src/controllers",
-        "@config": "src/appConfig.ts"
+        "@config": "src/appConfig.ts",
+        "@middlewares": "src/middlewares"
     },
     "scripts": {
         "dev": "ts-node-dev --no-notify -r tsconfig-paths/register src/index.ts",
@@ -32,6 +33,7 @@
     "homepage": "https://github.com/furkanDogu/Sector45#readme",
     "dependencies": {
         "@types/bcrypt": "^3.0.0",
+        "@types/cors": "^2.8.6",
         "@types/helmet": "0.0.44",
         "@types/jsonwebtoken": "^8.3.4",
         "@types/mssql": "^4.3.1",

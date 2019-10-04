@@ -1,11 +1,12 @@
 import { Router } from 'express';
 
 import { CustomerController } from '@controllers';
+import { bodyChecker } from '@middlewares';
 
 const router = Router();
 
-router.post('/login', [CustomerController.login]);
+router.post('/register', [bodyChecker(['address']), CustomerController.register]);
 
-router.post('/register', [CustomerController.register]);
+router.post('/login', [bodyChecker(), CustomerController.login]);
 
 export default router;
