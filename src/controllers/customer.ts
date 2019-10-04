@@ -13,14 +13,17 @@ import { JWT_SECRET } from '@config';
 //token döneceğiz.
 export class CustomerController {
     static register = async (req: Request, res: Response, next: NextFunction) => {
-        if (!req.body.address || (await validate(req.body.address)).length > 0) {
+        if (
+            !req.body.address ||
+            (await validate(Object.create(Address, req.body.address))).length > 0
+        ) {
             res.status(403).json({ data: 'Address information is not valid' });
             return;
         }
         const address = await Address.create(req.body.address).save();
         delete req.body.address;
 
-        if ((await validate(req.body)).length > 0) {
+        if ((await validate(Object.create(Customer, req.body))).length > 0) {
             res.status(403).json({ data: 'Customer information is not valid' });
             return;
         }
