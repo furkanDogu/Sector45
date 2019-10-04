@@ -7,7 +7,7 @@ import { Lazy } from '@utils/ormHelpers';
 @Entity()
 export class Address extends BaseEntity {
     @PrimaryGeneratedColumn()
-    id: string;
+    id: number;
 
     @IsNotEmpty()
     @Column('varchar', { length: 255 })

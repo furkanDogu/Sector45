@@ -16,7 +16,7 @@ import { findEntityById, Lazy } from '@utils/ormHelpers';
 @Entity()
 export class Transaction extends BaseEntity {
     @PrimaryGeneratedColumn()
-    transactionNo: string;
+    transactionNo: number;
 
     @Min(1)
     @Column('money')
