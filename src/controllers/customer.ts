@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { validate } from 'class-validator';
+import { plainToClassFromExist } from 'class-transformer';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
@@ -15,22 +16,35 @@ export class CustomerController {
     static register = async (req: Request, res: Response, next: NextFunction) => {
         if (
             !req.body.address ||
-            (await validate(Object.create(Address, req.body.address))).length > 0
+            (await validate(plainToClassFromExist(Address, req.body.address))).length > 0
         ) {
             res.status(403).json({ data: 'Address information is not valid' });
             return;
         }
-        const address = await Address.create(req.body.address).save();
+        const address = Address.create(req.body.address);
+        try {
+            await address.save();
+        } catch (e) {
+            res.status(400).json({ data: e.message });
+            return;
+        }
         delete req.body.address;
 
-        if ((await validate(Object.create(Customer, req.body))).length > 0) {
+        if ((await validate(plainToClassFromExist(Customer, req.body))).length > 0) {
             res.status(403).json({ data: 'Customer information is not valid' });
             return;
         }
-        const { password, ...customer } = await Customer.create({
+        const customer = await Customer.create({
             ...req.body,
             address,
-        }).save();
+        });
+        try {
+            await customer.save();
+        } catch (e) {
+            res.status(400).json({ data: e.message });
+            return;
+        }
+        delete customer.password;
 
         res.status(200).json({
             token: jwt.sign(
