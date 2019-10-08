@@ -21,7 +21,7 @@ export class CustomerController {
             address = await Address.create(req.body.address).save();
             delete req.body.address;
         } catch (e) {
-            res.status(400).json(modifyErrMsg(e));
+            res.status(400).json({ error: modifyErrMsg(e) });
             return;
         }
 
@@ -33,7 +33,7 @@ export class CustomerController {
             }).save();
             delete customer.password;
         } catch (e) {
-            res.status(400).json(modifyErrMsg(e));
+            res.status(400).json({ error: modifyErrMsg(e) });
             return;
         }
 
@@ -46,6 +46,7 @@ export class CustomerController {
                 { expiresIn: 36000000 }
             ),
             data: customer,
+            error: null,
         });
     };
 
@@ -53,18 +54,18 @@ export class CustomerController {
     //TCKN database üzerinde var ise mevcut TCKN'ye ait şifreyi eldeki şifre ile karşılaştır.
     //Mevcut bilgiler için bir token oluştur.
     static login = async (req: Request, res: Response) => {
-        const e = 'Login Information is not valid';
+        const error = 'Login Information is not valid';
         const customer = await Customer.findOne({
             where: { TCKN: req.body.TCKN },
         });
 
         if (!customer) {
-            res.status(401).json(e);
+            res.status(401).json({ error });
             return;
         }
 
         if (!(await bcrypt.compare(req.body.password, customer.password))) {
-            res.status(401).json(e);
+            res.status(401).json({ error });
             return;
         }
 
@@ -77,6 +78,7 @@ export class CustomerController {
                 { expiresIn: 36000000 }
             ),
             data: customer,
+            error: null,
         });
     };
 }
