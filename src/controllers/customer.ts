@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { getRepository } from 'typeorm';
 import { validateOrReject } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import jwt from 'jsonwebtoken';
@@ -6,7 +7,8 @@ import bcrypt from 'bcrypt';
 
 import { Customer, Address } from '@entities';
 import { JWT_SECRET } from '@config';
-import { modifyErrMsg } from '@utils/ormHelpers';
+import { modifyErrMsg, findEntityById } from '@utils/ormHelpers';
+import { AccountController } from './account';
 
 //Müşteri ve adres bilgilerini response objeleri içerisinden al.
 // Objelerden dönen bilgileri validate ile kontrol et.
@@ -31,6 +33,11 @@ export class CustomerController {
                 ...req.body,
                 address,
             }).save();
+            // create account to the customer with customerId
+            if (!(await AccountController.newAccount(customer.customerNo))) {
+                throw new Error();
+            }
+            await customer.accounts;
             delete customer.password;
         } catch (e) {
             res.status(400).json({ error: modifyErrMsg(e) });
@@ -69,6 +76,7 @@ export class CustomerController {
             return;
         }
 
+        delete customer.password;
         res.status(200).json({
             token: jwt.sign(
                 {
@@ -79,6 +87,20 @@ export class CustomerController {
             ),
             data: customer,
             error: null,
+        });
+    };
+    static accounts = async (req: Request, res: Response) => {
+        let customer;
+        customer = await findEntityById(getRepository(Customer), req.params.customerId);
+        if (!customer) {
+            return res.status(400).json({
+                error: 'Customer is not found',
+            });
+        }
+
+        return res.status(200).json({
+            error: null,
+            data: await customer.accounts,
         });
     };
 }
