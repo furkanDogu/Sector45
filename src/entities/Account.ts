@@ -6,12 +6,13 @@ import {
     BeforeInsert,
     BaseEntity,
     OneToMany,
+    getRepository,
 } from 'typeorm';
 import { Min, IsBoolean, IsNotEmpty } from 'class-validator';
 import _unset from 'lodash/unset';
 
 import { Customer, Transaction, Operation } from '@entities';
-import { Lazy } from '@utils/ormHelpers';
+import { Lazy, findEntityById } from '@utils/ormHelpers';
 
 @Entity()
 export class Account extends BaseEntity {
@@ -47,15 +48,16 @@ export class Account extends BaseEntity {
     }
 
     async withdraw(amount: number) {
-        if (amount < 1 || amount > this.balance) {
-            throw new Error();
+        if (amount < 1 || amount > this.balance || typeof amount !== 'number') {
+            return [null, null];
         }
         let operation;
+
         try {
             this.balance = this.balance - amount;
             operation = await Operation.create({
                 amount: amount,
-                account: this,
+                account: await findEntityById(getRepository(Account), this.accountNo),
                 isDeposit: false,
             }).save();
             _unset(operation, '__account__');
@@ -64,15 +66,16 @@ export class Account extends BaseEntity {
     }
 
     async deposit(amount: number) {
-        if (amount <= 0) {
-            throw new Error();
-        }
         let operation;
+        if (amount <= 0 || typeof amount !== 'number') {
+            return [null, null];
+        }
+
         try {
             this.balance += amount;
             operation = await Operation.create({
                 amount: amount,
-                account: this,
+                account: await findEntityById(getRepository(Account), this.accountNo),
                 isDeposit: true,
             }).save();
             _unset(operation, '__account__');
