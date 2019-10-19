@@ -6,14 +6,14 @@ import { Account } from '@entities';
 export class OperationController {
     static withdraw = async (req: Request, res: Response) => {
         try {
-            const accountFound = await findEntityById(getRepository(Account), req.body.accountId);
-            let [operation, account] = await accountFound.withdraw(req.body.amount);
-            if (!operation) throw new Error();
-            await (account as Account).save();
+            let operation = await (await findEntityById(
+                getRepository(Account),
+                req.body.accountId
+            )).withdraw(req.body.amount);
 
             return res.status(200).json({
                 error: null,
-                data: { ...operation, balance: (account as Account).balance },
+                data: operation,
             });
         } catch {
             return res.status(400).json({ error: "Withdraw wasn't successfull" });
@@ -21,15 +21,14 @@ export class OperationController {
     };
     static deposit = async (req: Request, res: Response) => {
         try {
-            const accountFound = await findEntityById(getRepository(Account), req.body.accountId);
-
-            let [operation, account] = await accountFound.deposit(req.body.amount);
-            if (!operation) throw new Error();
-            await (account as Account).save();
+            let operation = await (await findEntityById(
+                getRepository(Account),
+                req.body.accountId
+            )).deposit(req.body.amount);
 
             return res.status(200).json({
                 error: null,
-                data: { ...operation, balance: (account as Account).balance },
+                data: operation,
             });
         } catch {
             return res.status(400).json({ error: "Deposit wasn't successfull" });

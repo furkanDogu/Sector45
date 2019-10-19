@@ -36,16 +36,12 @@ export class AccountController {
         });
     };
     static closeAccount = async (req: Request, res: Response) => {
-        if (!req.params.accountId) {
-            return res.status(400).json({
-                error: `Account id wasn't provided`,
-            });
-        }
         let account;
         try {
             account = await findEntityById(getRepository(Account), req.params.accountId);
-            if ((await account.customer).customerNo !== parseInt(res.locals['customerNo']))
-                throw new Error();
+            // if ((await account.customer).customerNo !== parseInt(res.locals['customerNo']))
+            //     throw new Error();
+            if (account.balance > 0) throw new Error();
             account.isActive = false;
             await account.save();
 
