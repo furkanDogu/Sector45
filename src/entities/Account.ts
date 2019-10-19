@@ -9,7 +9,7 @@ import {
     getRepository,
     getManager,
 } from 'typeorm';
-import { Min, IsBoolean, IsNotEmpty, validateOrReject } from 'class-validator';
+import { Min, IsBoolean, IsNotEmpty, validateOrReject, IsNumber } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import _unset from 'lodash/unset';
 
@@ -23,6 +23,7 @@ export class Account extends BaseEntity {
 
     @Min(0)
     @Column('money')
+    @IsNumber()
     balance: number = 0;
 
     @IsBoolean()
@@ -61,7 +62,7 @@ export class Account extends BaseEntity {
                 amount,
                 isDeposit: false,
             });
-            await validateOrReject(plainToClass(Operation, tempOpr));
+            await validateOrReject(tempOpr);
 
             return transaction.save(tempOpr);
         });
@@ -74,7 +75,7 @@ export class Account extends BaseEntity {
         let account: Account | undefined;
         let operation = await getManager().transaction(async transaction => {
             this.balance += amount;
-            await validateOrReject(plainToClass(Account, this));
+            await validateOrReject(this);
             account = await transaction.save(this);
 
             let tempOpr = Operation.create({
@@ -82,7 +83,7 @@ export class Account extends BaseEntity {
                 amount,
                 isDeposit: true,
             });
-            await validateOrReject(plainToClass(Operation, tempOpr));
+            await validateOrReject(tempOpr);
 
             return transaction.save(tempOpr);
         });

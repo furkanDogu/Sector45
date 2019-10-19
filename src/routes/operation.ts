@@ -5,8 +5,10 @@ import { bodyChecker } from '@middlewares';
 
 const router = Router();
 
-router.post('/withdraw', [bodyChecker(['amount', 'accountId']), OperationController.withdraw]);
+router.post('/withdraw', [bodyChecker(['amount', 'accountNo']), OperationController.withdraw]);
 
-router.post('/deposit', [bodyChecker(), OperationController.deposit]);
+router.post('/deposit', [bodyChecker(['amount', 'accountNo']), OperationController.deposit]);
+
+router.get('/:accountId', [OperationController.operations]);
 
 export default router;

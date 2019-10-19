@@ -8,6 +8,6 @@ router.get('/new/:customerId', [AccountController.getNewAccount]);
 
 router.get('/close/:accountId', [AccountController.closeAccount]);
 
-router.get('/operations/:accountId', [AccountController.operations]);
+router.get('/:customerId', [AccountController.accounts]);
 
 export default router;
