@@ -18,11 +18,6 @@ export class AccountController {
         return account;
     };
     static getNewAccount = async (req: Request, res: Response) => {
-        if (!req.params.customerId) {
-            return res.status(400).json({
-                error: `Customer id wasn't provided`,
-            });
-        }
         const acc = await AccountController.newAccount(parseInt(req.params.customerId));
         if (!acc) {
             return res.status(400).json({
@@ -52,23 +47,6 @@ export class AccountController {
         } catch {
             return res.status(400).json({
                 error: 'Account is not closed',
-            });
-        }
-    };
-
-    static operations = async (req: Request, res: Response) => {
-        let account;
-        try {
-            account = await findEntityById(getRepository(Account), req.params.accountId);
-            if (!account) throw new Error();
-
-            return res.status(200).json({
-                error: null,
-                data: await account.operations,
-            });
-        } catch (e) {
-            return res.status(400).json({
-                error: 'Account is not found',
             });
         }
     };

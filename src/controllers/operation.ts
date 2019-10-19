@@ -34,4 +34,21 @@ export class OperationController {
             return res.status(400).json({ error: "Deposit wasn't successfull" });
         }
     };
+
+    static operations = async (req: Request, res: Response) => {
+        let account;
+        try {
+            account = await findEntityById(getRepository(Account), req.params.accountId);
+            if (!account) throw new Error();
+
+            return res.status(200).json({
+                error: null,
+                data: await account.operations,
+            });
+        } catch (e) {
+            return res.status(400).json({
+                error: 'Account is not found',
+            });
+        }
+    };
 }

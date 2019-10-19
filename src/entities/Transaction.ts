@@ -8,7 +8,7 @@ import {
     BeforeInsert,
     getRepository,
 } from 'typeorm';
-import { IsNotEmpty, Min } from 'class-validator';
+import { IsNotEmpty, Min, IsNumber } from 'class-validator';
 
 import { Account } from '@entities';
 import { findEntityById, Lazy } from '@utils/ormHelpers';
@@ -20,6 +20,7 @@ export class Transaction extends BaseEntity {
 
     @Min(1)
     @Column('money')
+    @IsNumber()
     amount: number;
 
     @IsNotEmpty()
