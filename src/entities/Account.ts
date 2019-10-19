@@ -6,12 +6,15 @@ import {
     BeforeInsert,
     BaseEntity,
     OneToMany,
+    getRepository,
+    getManager,
 } from 'typeorm';
-import { Min, IsBoolean, IsNotEmpty } from 'class-validator';
+import { Min, IsBoolean, IsNotEmpty, validateOrReject } from 'class-validator';
+import { plainToClass } from 'class-transformer';
 import _unset from 'lodash/unset';
 
 import { Customer, Transaction, Operation } from '@entities';
-import { Lazy } from '@utils/ormHelpers';
+import { Lazy, findEntityById } from '@utils/ormHelpers';
 
 @Entity()
 export class Account extends BaseEntity {
@@ -47,36 +50,44 @@ export class Account extends BaseEntity {
     }
 
     async withdraw(amount: number) {
-        if (amount < 1 || amount > this.balance) {
-            throw new Error();
-        }
-        let operation;
-        try {
-            this.balance = this.balance - amount;
-            operation = await Operation.create({
-                amount: amount,
-                account: this,
+        let account: Account | undefined;
+        let operation = await getManager().transaction(async transaction => {
+            this.balance -= amount;
+            await validateOrReject(plainToClass(Account, this));
+            account = await transaction.save(this);
+
+            let tempOpr = Operation.create({
+                account,
+                amount,
                 isDeposit: false,
-            }).save();
-            _unset(operation, '__account__');
-        } catch (e) {}
-        return [operation, this];
+            });
+            await validateOrReject(plainToClass(Operation, tempOpr));
+
+            return transaction.save(tempOpr);
+        });
+        _unset(operation, '__account__');
+
+        return { ...operation, balance: (account as Account).balance };
     }
 
     async deposit(amount: number) {
-        if (amount <= 0) {
-            throw new Error();
-        }
-        let operation;
-        try {
+        let account: Account | undefined;
+        let operation = await getManager().transaction(async transaction => {
             this.balance += amount;
-            operation = await Operation.create({
-                amount: amount,
-                account: this,
+            await validateOrReject(plainToClass(Account, this));
+            account = await transaction.save(this);
+
+            let tempOpr = Operation.create({
+                account,
+                amount,
                 isDeposit: true,
-            }).save();
-            _unset(operation, '__account__');
-        } catch (e) {}
-        return [operation, this];
+            });
+            await validateOrReject(plainToClass(Operation, tempOpr));
+
+            return transaction.save(tempOpr);
+        });
+        _unset(operation, '__account__');
+
+        return { ...operation, balance: (account as Account).balance };
     }
 }
