@@ -9,6 +9,6 @@ router.post('/withdraw', [bodyChecker(['amount', 'accountNo']), OperationControl
 
 router.post('/deposit', [bodyChecker(['amount', 'accountNo']), OperationController.deposit]);
 
-router.get('/:accountId', [OperationController.operations]);
+router.get('/:accountNo', [OperationController.operations]);
 
 export default router;
