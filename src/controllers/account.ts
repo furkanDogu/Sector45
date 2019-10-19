@@ -44,7 +44,7 @@ export class AccountController {
                 error: null,
                 data: account,
             });
-        } catch {
+        } catch (e) {
             return res.status(400).json({
                 error: 'Account is not closed',
             });
