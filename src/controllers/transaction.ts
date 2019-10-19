@@ -10,10 +10,15 @@ export class TransactionController {
     static makeTransaction = async (req: Request, res: Response) => {
         try {
             // check if the account ids are same
+
             const { senderAccountId, receiverAccountId, amount } = req.body;
+
+            if (senderAccountId === receiverAccountId) throw new Error();
 
             let senderAccount = await findEntityById(getRepository(Account), senderAccountId);
             let receiverAccount = await findEntityById(getRepository(Account), receiverAccountId);
+
+            if (!senderAccount.isActive || !receiverAccount.isActive) throw new Error();
 
             senderAccount.balance -= amount;
             receiverAccount.balance += amount;
