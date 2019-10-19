@@ -61,11 +61,19 @@ export class TransactionController {
             const updatedTransactions = await Promise.all(
                 transactions.map(async transaction => {
                     const senderAccount = await transaction.senderAccount;
+                    const receiverAccount = await transaction.receiverAccount;
                     _unset(transaction, '__senderAccount__');
+                    _unset(transaction, '__receiverAccount__');
                     _unset(transaction, '__has_senderAccount__');
+                    _unset(transaction, '__has_receiverAccount__');
+
+                    const isSender = req.params.accountId === senderAccount.accountNo;
+
                     return {
                         ...transaction,
-                        isSent: req.params.accountId === senderAccount.accountNo,
+                        [isSender ? 'receiverAccount' : 'senderAccount']: isSender
+                            ? receiverAccount
+                            : senderAccount,
                     };
                 })
             );
