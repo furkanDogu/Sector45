@@ -89,18 +89,4 @@ export class CustomerController {
             error: null,
         });
     };
-    static accounts = async (req: Request, res: Response) => {
-        let customer;
-        customer = await findEntityById(getRepository(Customer), req.params.customerId);
-        if (!customer) {
-            return res.status(400).json({
-                error: 'Customer is not found',
-            });
-        }
-
-        return res.status(200).json({
-            error: null,
-            data: await customer.accounts,
-        });
-    };
 }

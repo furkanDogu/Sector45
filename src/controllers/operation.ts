@@ -8,7 +8,7 @@ export class OperationController {
         try {
             let operation = await (await findEntityById(
                 getRepository(Account),
-                req.body.accountId
+                req.body.accountNo
             )).withdraw(req.body.amount);
 
             return res.status(200).json({
@@ -23,7 +23,7 @@ export class OperationController {
         try {
             let operation = await (await findEntityById(
                 getRepository(Account),
-                req.body.accountId
+                req.body.accountNo
             )).deposit(req.body.amount);
 
             return res.status(200).json({
@@ -38,7 +38,7 @@ export class OperationController {
     static operations = async (req: Request, res: Response) => {
         let account;
         try {
-            account = await findEntityById(getRepository(Account), req.params.accountId);
+            account = await findEntityById(getRepository(Account), req.params.accountNo);
             if (!account) throw new Error();
 
             return res.status(200).json({
