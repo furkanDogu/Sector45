@@ -18,6 +18,8 @@ export class TransactionController {
             let senderAccount = await findEntityById(getRepository(Account), senderAccountId);
             let receiverAccount = await findEntityById(getRepository(Account), receiverAccountId);
 
+            if (!senderAccount.isActive || !receiverAccount.isActive) throw new Error();
+
             senderAccount.balance -= amount;
             receiverAccount.balance += amount;
 

@@ -6,10 +6,10 @@ import { Account } from '@entities';
 export class OperationController {
     static withdraw = async (req: Request, res: Response) => {
         try {
-            let operation = await (await findEntityById(
-                getRepository(Account),
-                req.body.accountNo
-            )).withdraw(req.body.amount);
+            const account = await findEntityById(getRepository(Account), req.body.accountNo);
+            if (!account.isActive) throw new Error();
+
+            let operation = await account.withdraw(req.body.amount);
 
             return res.status(200).json({
                 error: null,
@@ -21,10 +21,10 @@ export class OperationController {
     };
     static deposit = async (req: Request, res: Response) => {
         try {
-            let operation = await (await findEntityById(
-                getRepository(Account),
-                req.body.accountNo
-            )).deposit(req.body.amount);
+            const account = await findEntityById(getRepository(Account), req.body.accountNo);
+            if (!account.isActive) throw new Error();
+
+            let operation = account.deposit(req.body.amount);
 
             return res.status(200).json({
                 error: null,
