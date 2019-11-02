@@ -9,7 +9,8 @@
             "@entities": ["src/entities"],
             "@controllers": ["src/controllers"],
             "@config": ["src/appConfig.ts"],
-            "@middlewares": ["src/middlewares"]
+            "@middlewares": ["src/middlewares"],
+            "@appTypes": ["src/types"]
         },
         "incremental": true,
         "esModuleInterop": true,

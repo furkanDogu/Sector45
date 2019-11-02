@@ -4,6 +4,7 @@ import _unset from 'lodash/unset';
 
 import { findEntityById } from '@utils/ormHelpers';
 import { Customer, Account } from '@entities';
+import { RequestHandler } from '@appTypes';
 
 export class AccountController {
     static newAccount = async (customerId: number) => {
@@ -17,7 +18,7 @@ export class AccountController {
 
         return account;
     };
-    static getNewAccount = async (req: Request, res: Response) => {
+    static getNewAccount: RequestHandler<Promise<any>> = async (req, res) => {
         const acc = await AccountController.newAccount(parseInt(req.params.customerId));
         if (!acc) {
             return res.status(400).json({
@@ -30,7 +31,7 @@ export class AccountController {
             error: null,
         });
     };
-    static closeAccount = async (req: Request, res: Response) => {
+    static closeAccount: RequestHandler<Promise<any>> = async (req, res) => {
         let account;
         try {
             account = await findEntityById(getRepository(Account), req.params.accountId);
@@ -51,7 +52,7 @@ export class AccountController {
         }
     };
 
-    static accounts = async (req: Request, res: Response) => {
+    static accounts: RequestHandler<Promise<any>> = async (req, res) => {
         let customer;
         customer = await findEntityById(getRepository(Customer), req.params.customerId);
         if (!customer) {

@@ -4,6 +4,7 @@ import customer from './customer';
 import account from './account';
 import operation from './operation';
 import transaction from './transaction';
+import hgs from './hgs';
 
 const router = Router();
 
@@ -12,5 +13,6 @@ router.use('/customer', customer);
 router.use('/account', account);
 router.use('/operation', operation);
 router.use('/transaction', transaction);
+router.use('/hgs', hgs);
 
 export default router;

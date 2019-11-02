@@ -6,7 +6,6 @@ import {
     BeforeInsert,
     BaseEntity,
     OneToMany,
-    getRepository,
     getManager,
 } from 'typeorm';
 import { Min, IsBoolean, IsNotEmpty, validateOrReject, IsNumber } from 'class-validator';
@@ -14,7 +13,7 @@ import { plainToClass } from 'class-transformer';
 import _unset from 'lodash/unset';
 
 import { Customer, Transaction, Operation } from '@entities';
-import { Lazy, findEntityById } from '@utils/ormHelpers';
+import { Lazy } from '@utils/ormHelpers';
 
 @Entity()
 export class Account extends BaseEntity {

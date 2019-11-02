@@ -1,10 +1,12 @@
-import { Request, Response } from 'express';
-import { findEntityById } from '@utils/ormHelpers';
 import { getRepository } from 'typeorm';
+
 import { Account } from '@entities';
 
+import { RequestHandler } from '@appTypes';
+import { findEntityById } from '@utils/ormHelpers';
+
 export class OperationController {
-    static withdraw = async (req: Request, res: Response) => {
+    static withdraw: RequestHandler<Promise<any>> = async (req, res) => {
         try {
             const account = await findEntityById(getRepository(Account), req.body.accountNo);
             if (!account.isActive) throw new Error();
@@ -19,12 +21,12 @@ export class OperationController {
             return res.status(400).json({ error: "Withdraw wasn't successfull" });
         }
     };
-    static deposit = async (req: Request, res: Response) => {
+    static deposit: RequestHandler<Promise<any>> = async (req, res) => {
         try {
             const account = await findEntityById(getRepository(Account), req.body.accountNo);
             if (!account.isActive) throw new Error();
 
-            let operation = account.deposit(req.body.amount);
+            let operation = await account.deposit(req.body.amount);
 
             return res.status(200).json({
                 error: null,
@@ -35,7 +37,7 @@ export class OperationController {
         }
     };
 
-    static operations = async (req: Request, res: Response) => {
+    static operations: RequestHandler<Promise<any>> = async (req, res) => {
         let account;
         try {
             account = await findEntityById(getRepository(Account), req.params.accountNo);
