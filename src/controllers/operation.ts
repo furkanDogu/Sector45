@@ -7,11 +7,16 @@ import { findEntityById } from '@utils/ormHelpers';
 
 export class OperationController {
     static withdraw: RequestHandler<Promise<any>> = async (req, res) => {
+        const { accountNo, amount, source } = req.body;
         try {
-            const account = await findEntityById(getRepository(Account), req.body.accountNo);
+            const account = await findEntityById(getRepository(Account), accountNo);
             if (!account.isActive) throw new Error();
 
-            let operation = await account.withdraw(req.body.amount);
+            let operation = await account.withdraw(
+                amount,
+                `${amount} Lira is withdrawn by you`,
+                source
+            );
 
             return res.status(200).json({
                 error: null,
@@ -22,11 +27,12 @@ export class OperationController {
         }
     };
     static deposit: RequestHandler<Promise<any>> = async (req, res) => {
+        const { amount, source, accountNo } = req.body;
         try {
-            const account = await findEntityById(getRepository(Account), req.body.accountNo);
+            const account = await findEntityById(getRepository(Account), accountNo);
             if (!account.isActive) throw new Error();
 
-            let operation = await account.deposit(req.body.amount);
+            let operation = await account.deposit(amount, source);
 
             return res.status(200).json({
                 error: null,

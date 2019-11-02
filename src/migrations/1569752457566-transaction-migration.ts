@@ -14,6 +14,10 @@ export class TransactionMigration1569752457566 implements MigrationInterface {
             `ALTER TABLE "transaction" ADD CONSTRAINT "FK_cba32eb9727892214bd55bb5788" FOREIGN KEY ("receiverAccountAccountNo") REFERENCES "account"("accountNo") ON DELETE NO ACTION ON UPDATE NO ACTION`,
             undefined
         );
+        await queryRunner.query(
+            `ALTER TABLE "transaction" ADD "source" varchar(255) NOT NULL`,
+            undefined
+        );
     }
 
     public async down(queryRunner: QueryRunner): Promise<any> {

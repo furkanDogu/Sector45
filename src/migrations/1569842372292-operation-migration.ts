@@ -10,6 +10,15 @@ export class OperationMigration1569842372292 implements MigrationInterface {
             `ALTER TABLE "operation" ADD CONSTRAINT "FK_b970a098793aa09083a5246ce56" FOREIGN KEY ("accountAccountNo") REFERENCES "account"("accountNo") ON DELETE NO ACTION ON UPDATE NO ACTION`,
             undefined
         );
+
+        await queryRunner.query(
+            `ALTER TABLE "operation" ADD "description" varchar(255) NOT NULL`,
+            undefined
+        );
+        await queryRunner.query(
+            `ALTER TABLE "operation" ADD "source" varchar(255) NOT NULL`,
+            undefined
+        );
     }
 
     public async down(queryRunner: QueryRunner): Promise<any> {
