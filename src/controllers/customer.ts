@@ -39,13 +39,13 @@ export class CustomerController {
         }
 
         res.status(200).json({
-            token: jwt.sign(
-                {
-                    customerNo: customer.customerNo,
-                },
-                JWT_SECRET,
-                { expiresIn: 36000000 }
-            ),
+            // token: jwt.sign(
+            //     {
+            //         customerNo: customer.customerNo,
+            //     },
+            //     JWT_SECRET,
+            //     { expiresIn: 36000000 }
+            // ),
             data: customer,
             error: null,
         });
