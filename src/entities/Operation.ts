@@ -17,7 +17,7 @@ export class Operation extends BaseEntity {
     @PrimaryGeneratedColumn()
     operationId: number;
 
-    @Min(1)
+    @Min(0.1)
     @Column('money')
     @IsNumber()
     amount: number;
