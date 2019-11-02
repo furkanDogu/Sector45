@@ -18,7 +18,7 @@ export class Transaction extends BaseEntity {
     @PrimaryGeneratedColumn()
     transactionNo: number;
 
-    @Min(1)
+    @Min(0.1)
     @Column('money')
     @IsNumber()
     amount: number;
