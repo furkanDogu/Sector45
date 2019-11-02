@@ -17,7 +17,7 @@ export class HGSController {
                 amount,
             });
             if (responseFromHSGApi.status === 200) {
-                await account.withdraw(amount);
+                await account.withdraw(amount, `${amount} is paid for HGS Card with ID ${cardId}`);
                 return res.send(responseFromHSGApi.data);
             }
             throw new Error('An error occured in HGS API');
@@ -44,7 +44,10 @@ export class HGSController {
                 amount,
             });
             if (responseFromHSGApi.status === 200) {
-                await account.withdraw(amount);
+                await account.withdraw(
+                    amount,
+                    `${amount} is paid for initial HGS Card subscription`
+                );
                 return res.status(200).send(responseFromHSGApi.data);
             }
         } catch (error) {
@@ -56,7 +59,10 @@ export class HGSController {
                         amount,
                     });
                     if (responseFromHSGApi.status === 200) {
-                        await account.withdraw(amount);
+                        await account.withdraw(
+                            amount,
+                            `${amount} is paid for having another HGS Card`
+                        );
                         return res.send(responseFromHSGApi.data);
                     }
                 } catch (error) {
