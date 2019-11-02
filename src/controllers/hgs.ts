@@ -8,7 +8,7 @@ import { HGS_API_URL } from '@config';
 export class HGSController {
     static deposit: RequestHandler<Promise<any>> = async (req, res) => {
         try {
-            const { accountNo, amount, cardId } = req.body;
+            const { accountNo, amount, cardId, source } = req.body;
 
             const account = await Account.findOneOrFail({ accountNo });
 
@@ -17,7 +17,11 @@ export class HGSController {
                 amount,
             });
             if (responseFromHSGApi.status === 200) {
-                await account.withdraw(amount, `${amount} is paid for HGS Card with ID ${cardId}`);
+                await account.withdraw(
+                    amount,
+                    `${amount} is paid for HGS Card with ID ${cardId}`,
+                    source
+                );
                 return res.send(responseFromHSGApi.data);
             }
             throw new Error('An error occured in HGS API');
@@ -28,7 +32,7 @@ export class HGSController {
 
     static registerNewCard: RequestHandler<Promise<any>> = async (req, res) => {
         let TCKN, account;
-        const { amount, accountNo } = req.body;
+        const { amount, accountNo, source } = req.body;
         try {
             account = await Account.findOneOrFail({ accountNo });
             TCKN = (await account.customer).TCKN;
@@ -46,7 +50,8 @@ export class HGSController {
             if (responseFromHSGApi.status === 200) {
                 await account.withdraw(
                     amount,
-                    `${amount} is paid for initial HGS Card subscription`
+                    `${amount} Lira is paid for initial HGS Card subscription`,
+                    source
                 );
                 return res.status(200).send(responseFromHSGApi.data);
             }
@@ -61,7 +66,8 @@ export class HGSController {
                     if (responseFromHSGApi.status === 200) {
                         await account.withdraw(
                             amount,
-                            `${amount} is paid for having another HGS Card`
+                            `${amount} Lira is paid for having another HGS Card`,
+                            source
                         );
                         return res.send(responseFromHSGApi.data);
                     }

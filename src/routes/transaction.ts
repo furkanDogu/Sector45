@@ -6,7 +6,7 @@ import { bodyChecker } from '@middlewares';
 const router = Router();
 
 router.post('/', [
-    bodyChecker(['receiverAccountId', 'senderAccountId', 'amount']),
+    bodyChecker(['receiverAccountId', 'senderAccountId', 'amount', 'source']),
     TransactionController.makeTransaction,
 ]);
 

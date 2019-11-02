@@ -37,6 +37,9 @@ export class Transaction extends BaseEntity {
     @Column()
     isLocal: boolean;
 
+    @Column('varchar', { length: 255 })
+    source: string;
+
     @BeforeInsert()
     async setIsLocal() {
         this.date = new Date();

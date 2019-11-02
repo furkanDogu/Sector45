@@ -12,7 +12,11 @@ export class OperationMigration1569842372292 implements MigrationInterface {
         );
 
         await queryRunner.query(
-            `ALTER TABLE "operation" ADD "desc" varchar(255) NOT NULL`,
+            `ALTER TABLE "operation" ADD "description" varchar(255) NOT NULL`,
+            undefined
+        );
+        await queryRunner.query(
+            `ALTER TABLE "operation" ADD "source" varchar(255) NOT NULL`,
             undefined
         );
     }

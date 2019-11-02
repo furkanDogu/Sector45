@@ -31,6 +31,9 @@ export class Operation extends BaseEntity {
     @Column('varchar', { length: 255 })
     description: string;
 
+    @Column('varchar', { length: 255 })
+    source: string;
+
     @ManyToOne(() => Account, account => account.operations, { lazy: true })
     account: Lazy<Account>;
 }

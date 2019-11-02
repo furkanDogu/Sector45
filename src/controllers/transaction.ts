@@ -12,7 +12,7 @@ export class TransactionController {
         try {
             // check if the account ids are same
 
-            const { senderAccountId, receiverAccountId, amount } = req.body;
+            const { senderAccountId, receiverAccountId, amount, source } = req.body;
 
             if (senderAccountId === receiverAccountId) throw new Error();
 
@@ -31,6 +31,7 @@ export class TransactionController {
                 amount,
                 receiverAccount,
                 senderAccount,
+                source,
             });
 
             await validateOrReject(tempTransaction);

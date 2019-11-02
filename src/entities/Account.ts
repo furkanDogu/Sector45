@@ -49,7 +49,7 @@ export class Account extends BaseEntity {
         this.isActive = true;
     }
 
-    async withdraw(amount: number, description: string) {
+    async withdraw(amount: number, description: string, source: string) {
         let account: Account | undefined;
         let operation = await getManager().transaction(async transaction => {
             this.balance -= amount;
@@ -60,6 +60,7 @@ export class Account extends BaseEntity {
                 account,
                 description,
                 amount,
+                source,
                 isDeposit: false,
             });
             await validateOrReject(tempOpr);
@@ -71,7 +72,7 @@ export class Account extends BaseEntity {
         return { ...operation, balance: (account as Account).balance };
     }
 
-    async deposit(amount: number) {
+    async deposit(amount: number, source: string) {
         let account: Account | undefined;
         let operation = await getManager().transaction(async transaction => {
             this.balance += amount;
@@ -81,6 +82,7 @@ export class Account extends BaseEntity {
             let tempOpr = Operation.create({
                 account,
                 amount,
+                source,
                 isDeposit: true,
                 description: `${amount} Lira is added to the account.`,
             });
