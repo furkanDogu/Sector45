@@ -1,13 +1,14 @@
-import { Request, Response } from 'express';
 import { getRepository, getManager } from 'typeorm';
 import { validateOrReject } from 'class-validator';
 import _unset from 'lodash/unset';
 
 import { Transaction, Account } from '@entities';
+
+import { RequestHandler } from '@appTypes';
 import { findEntityById } from '@utils/ormHelpers';
 
 export class TransactionController {
-    static makeTransaction = async (req: Request, res: Response) => {
+    static makeTransaction: RequestHandler<Promise<any>> = async (req, res) => {
         try {
             // check if the account ids are same
 
@@ -51,7 +52,7 @@ export class TransactionController {
         }
     };
 
-    static transactions = async (req: Request, res: Response) => {
+    static transactions: RequestHandler<Promise<any>> = async (req, res) => {
         try {
             const account = await findEntityById(getRepository(Account), req.params.accountId);
             const transactions = await Transaction.find({

@@ -7,6 +7,6 @@ const router = Router();
 
 router.post('/register', [bodyChecker(['address']), CustomerController.register]);
 
-router.post('/login', [bodyChecker(), CustomerController.login]);
+router.post('/login', [bodyChecker(['TCKN', 'password']), CustomerController.login]);
 
 export default router;

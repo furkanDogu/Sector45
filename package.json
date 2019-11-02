@@ -8,7 +8,8 @@
         "@entities": "src/entities",
         "@controllers": "src/controllers",
         "@config": "src/appConfig.ts",
-        "@middlewares": "src/middlewares"
+        "@middlewares": "src/middlewares",
+        "@appTypes": "src/types"
     },
     "scripts": {
         "dev": "ts-node-dev --no-notify -r tsconfig-paths/register src/index.ts",
@@ -39,6 +40,7 @@
         "@types/lodash": "^4.14.144",
         "@types/mssql": "^4.3.1",
         "@types/shortid": "0.0.29",
+        "axios": "^0.19.0",
         "bcrypt": "^3.0.6",
         "body-parser": "^1.19.0",
         "class-transformer": "^0.2.3",
