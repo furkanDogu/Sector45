@@ -1,31 +1,38 @@
 import axios from 'axios';
 
-import { Customer, Account } from '@entities';
+import { Account } from '@entities';
 
 import { RequestHandler } from '@appTypes';
 import { HGS_API_URL } from '@config';
 
 export class HGSController {
     static deposit: RequestHandler<Promise<any>> = async (req, res) => {
+        const { accountNo, amount, cardId, source } = req.body;
+        let account;
         try {
-            const { accountNo, amount, cardId, source } = req.body;
+            account = await Account.findOneOrFail({ accountNo });
 
-            const account = await Account.findOneOrFail({ accountNo });
+            await account.withdraw(
+                amount,
+                `${amount} is paid for HGS Card with ID ${cardId}`,
+                source
+            );
 
             const responseFromHSGApi = await axios.post(`${HGS_API_URL}/operation`, {
                 cardId,
                 amount,
             });
-            if (responseFromHSGApi.status === 200) {
-                await account.withdraw(
-                    amount,
-                    `${amount} is paid for HGS Card with ID ${cardId}`,
-                    source
-                );
-                return res.send(responseFromHSGApi.data);
-            }
-            throw new Error('An error occured in HGS API');
+
+            return res.send(responseFromHSGApi.data);
         } catch (error) {
+            if (account && error.config && error.config.url === `${HGS_API_URL}/operation`) {
+                await account.deposit(
+                    amount,
+                    source,
+                    `${amount} Lira is added back to the account because of failed hgs deposit`
+                );
+                res.status(400).send({ error: 'hgs operation failed' });
+            }
             res.status(400).send({ error });
         }
     };
@@ -41,40 +48,44 @@ export class HGSController {
         }
 
         try {
+            await account.withdraw(amount, `${amount} Lira is paid for new HGS Card`, source);
+        } catch (error) {
+            return res.status(400).send({ error });
+        }
+
+        try {
             await axios.get(`${HGS_API_URL}/card/${TCKN}`);
 
             const responseFromHSGApi = await axios.post(`${HGS_API_URL}/card`, {
                 TCKN,
                 amount,
             });
-            if (responseFromHSGApi.status === 200) {
-                await account.withdraw(
-                    amount,
-                    `${amount} Lira is paid for initial HGS Card subscription`,
-                    source
-                );
-                return res.status(200).send(responseFromHSGApi.data);
-            }
+
+            return res.status(200).send(responseFromHSGApi.data);
         } catch (error) {
             if (error.response && error.response.status === 401) {
-                console.log('buraya geldim');
                 try {
                     const responseFromHSGApi = await axios.post(`${HGS_API_URL}/subscriber`, {
                         TCKN,
                         amount,
                     });
-                    if (responseFromHSGApi.status === 200) {
-                        await account.withdraw(
-                            amount,
-                            `${amount} Lira is paid for having another HGS Card`,
-                            source
-                        );
-                        return res.send(responseFromHSGApi.data);
-                    }
+
+                    return res.send(responseFromHSGApi.data);
                 } catch (error) {
+                    await account.deposit(
+                        amount,
+                        source,
+                        `${amount} is added back to the account because of failed new hgs card operation`
+                    );
+
                     return res.status(400).send({ error });
                 }
             }
+            await account.deposit(
+                amount,
+                source,
+                `${amount} is added back to the account because of failed new hgs card operation`
+            );
             return res.status(400).send({ error });
         }
     };
