@@ -29,6 +29,9 @@ export class Account extends BaseEntity {
     @Column()
     isActive: boolean = true;
 
+    @Column('varchar', { length: 255 })
+    code: string;
+
     @IsNotEmpty()
     @ManyToOne(() => Customer, customer => customer.accounts, { lazy: true })
     customer: Lazy<Customer>;
@@ -45,7 +48,8 @@ export class Account extends BaseEntity {
         const [accounts, count] = await Account.findAndCount({
             where: { customer: { customerNo: customer.customerNo } },
         });
-        this.accountNo = `${customer.TCKN.slice(9)}${customer.customerNo}${1000 + count}`;
+        this.code = `${1000 + count}`;
+        this.accountNo = `${customer.TCKN.slice(9)}${customer.customerNo}${this.code}`;
         this.isActive = true;
     }
 
@@ -72,7 +76,7 @@ export class Account extends BaseEntity {
         return { ...operation, balance: (account as Account).balance };
     }
 
-    async deposit(amount: number, source: string) {
+    async deposit(amount: number, source: string, description?: string) {
         let account: Account | undefined;
         let operation = await getManager().transaction(async transaction => {
             this.balance += amount;
@@ -84,7 +88,7 @@ export class Account extends BaseEntity {
                 amount,
                 source,
                 isDeposit: true,
-                description: `${amount} Lira is added to the account.`,
+                description: description ? description : `${amount} Lira is added to the account.`,
             });
             await validateOrReject(tempOpr);
 
