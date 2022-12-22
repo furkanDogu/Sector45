@@ -48,7 +48,7 @@
         "cors": "^2.8.5",
         "express": "^4.17.1",
         "helmet": "^3.21.1",
-        "jsonwebtoken": "^8.5.1",
+        "jsonwebtoken": "^9.0.0",
         "lodash": "^4.17.15",
         "msnodesqlv8": "^0.8.3",
         "mssql": "^5.1.0",
